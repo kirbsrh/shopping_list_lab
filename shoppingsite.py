@@ -49,7 +49,7 @@ def show_melon(melon_id):
     """
 
     melon = melons.get_by_id(melon_id) #this should say melon_id?
-    print(melon)
+    # print(melon)
     return render_template("melon_details.html",
                            display_melon=melon)
 
@@ -76,7 +76,8 @@ def show_shopping_cart():
     # Make sure your function can also handle the case wherein no cart has
     # been added to the session
 
-    cart_dict = session["cart"]
+    if session['cart']:
+        cart_dict = session["cart"]
     
 
     melon_objects = []
@@ -88,25 +89,22 @@ def show_shopping_cart():
     for melon_id, value in cart_dict.items():
 
         melon = value["melon"]
-        
-        #cart_dict[melon_id] = {"melon_type": melon.melon_type,
-        #                                   "common_name": melon.common_name,
-        #                                   "price": melon.price,
-        #                                   "image_url": melon.image_url,
-        #                                   "color": melon.color,
-        #                                   "seedless": melon.seedless,
-        #                                   "qty": 1}  
+        print(melon)
 
+        cost = melon.price * value["qty"]
 
+        total += cost
 
+        melon.qty = value["qty"]
 
+        melon.cost = cost
 
-
-
+        melon_objects.append(melon)
 
 
     # print(session["cart"])
-    return render_template("cart.html", cart_dict=cart_dict)
+    print(melon_objects)
+    return render_template("cart.html", total = total, melon_objects = melon_objects)
 
 
 @app.route("/add_to_cart/<melon_id>")
@@ -148,7 +146,7 @@ def add_to_cart(melon_id):
     # - increment the count for that melon id by 1
     # - flash a success message
     # - redirect the user to the cart page
-    print(cart_dict)
+    # print(cart_dict)
     flash("Melon successfully added to cart")
     return redirect("/cart")
 
